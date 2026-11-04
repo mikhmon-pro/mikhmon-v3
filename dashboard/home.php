@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__) . '/lib/routeros_compat.php';
 /*
  *  Copyright (C) 2018 Laksamadi Guko.
  *
@@ -26,6 +27,7 @@ if (!isset($_SESSION["mikhmon"])) {
 // get MikroTik system clock
   $getclock = $API->comm("/system/clock/print");
   $clock = $getclock[0];
+  $clock['date'] = mikhmon_v3_legacy_date(isset($clock['date']) ? $clock['date'] : '');
   $timezone = $getclock[0]['time-zone-name'];
   $_SESSION['timezone'] = $timezone;
   date_default_timezone_set($timezone);

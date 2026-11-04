@@ -180,13 +180,16 @@ class RouterosAPI
                     } else {
                         $CURRENT =& $PARSED[$x][];
                     }
-                } elseif ($x != '!done') {
-                    $MATCHES = array();
-                    if (preg_match_all('/[^=]+/i', $x, $MATCHES)) {
-                        if ($MATCHES[0][0] == 'ret') {
-                            $singlevalue = $MATCHES[0][1];
+                } elseif ($x != '!done' && $x != '!empty' && strpos((string) $x, '=') === 0) {
+                    // Split on the first '=' only, so values that contain '=' (scripts, comments) stay whole.
+                    $separator = strpos((string) $x, '=', 1);
+                    if ($separator !== false) {
+                        $key = substr((string) $x, 1, $separator - 1);
+                        $value = substr((string) $x, $separator + 1);
+                        if ($key == 'ret') {
+                            $singlevalue = $value;
                         }
-                        $CURRENT[$MATCHES[0][0]] = (isset($MATCHES[0][1]) ? $MATCHES[0][1] : '');
+                        $CURRENT[$key] = $value;
                     }
                 }
             }
@@ -222,23 +225,26 @@ class RouterosAPI
                     } else {
                         $CURRENT =& $PARSED[$x][];
                     }
-                } elseif ($x != '!done') {
-                    $MATCHES = array();
-                    if (preg_match_all('/[^=]+/i', $x, $MATCHES)) {
-                        if ($MATCHES[0][0] == 'ret') {
-                            $singlevalue = $MATCHES[0][1];
+                } elseif ($x != '!done' && $x != '!empty' && strpos((string) $x, '=') === 0) {
+                    // Split on the first '=' only, so values that contain '=' (scripts, comments) stay whole.
+                    $separator = strpos((string) $x, '=', 1);
+                    if ($separator !== false) {
+                        $key = substr((string) $x, 1, $separator - 1);
+                        $value = substr((string) $x, $separator + 1);
+                        if ($key == 'ret') {
+                            $singlevalue = $value;
                         }
-                        $CURRENT[$MATCHES[0][0]] = (isset($MATCHES[0][1]) ? $MATCHES[0][1] : '');
+                        $CURRENT[$key] = $value;
                     }
                 }
             }
             foreach ($PARSED as $key => $value) {
                 $PARSED[$key] = $this->arrayChangeKeyName($value);
             }
-            return $PARSED;
             if (empty($PARSED) && !is_null($singlevalue)) {
                 $PARSED = $singlevalue;
             }
+            return $PARSED;
         } else {
             return array();
         }

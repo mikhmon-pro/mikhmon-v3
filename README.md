@@ -1,214 +1,78 @@
-### MIKHMON V3
+# Mikhmon v3: MikroTik Hotspot Monitor for RouterOS v6 and v7
 
-#### Download update.zip
-[update.zip](https://raw.githubusercontent.com/laksa19/laksa19.github.io/master/download/update.zip){:target="_blank"}
+**Mikhmon v3 Community Edition** is the classic Mikhmon (MikroTik Hotspot Monitor) web app, updated to work on **RouterOS v6 and RouterOS v7**. You can generate and print hotspot vouchers, manage hotspot users and user profiles, and see sales reports, all from your browser. You don't need User Manager or RADIUS.
 
-### Changelog
+> ### ⚡ Prefer not to install anything?
+> **[Mikhmon Online at mikhmon.pro: just Rp10.000/month, tunnel included for up to 100 routers →](https://mikhmon.pro/fast?utm_source=github&utm_medium=readme&utm_campaign=mikhmon-v3)**
+>
+> It's the same Mikhmon in your browser, with no PC or server to keep running.
 
-#### Update 06-30 2021 V3.20
-1. Perbaikan typo script profile ```on-login```.
-	- Silakan update user profile dari Mikhmon, dengan cara membuka tiap user profile, kemudian klik Save.
+🇮🇩 [Baca dalam Bahasa Indonesia](#bahasa-indonesia)
 
-#### Update 24-01 2021
-1. Added docker-compose.yml for test-lab. added mikrotik routeros image.
-	- git clone project
-	- open project folder in terminal
-	- run terminal command --> docker-compose up -d
-	- go to localhost:8081. write ip address 192.168.88.1. write password 12345. apply configuration.
-	- go to localhost:8080. user:mikhmon password:1234. add router. ip address 172.27.0.7, user:admin, password: 12345. write 'test' other inputs.last click save button
-	- for stop --> docker-compose down
-	
-#### Update 09-08 2020 V3.19
-1. Penambahan jumlah sisa voucher di "option comment" laman user list.
+## Download
 
-#### Update 04-07 2020
-1. Added Dockerfile for test
-	- git clone project
-	- docker build --tag mikhmonv3 .
-	- docker run --rm -i -t -p 8080:80 --name="mkhmn1" mikhmonv3
-	- go to localhost:8080
+| Package | For | Link |
+|---|---|---|
+| **Mikhmon v3 (ZIP)** | A PHP web server, hosting, STB/Armbian or Raspberry Pi | [Download from mikhmon.pro](https://mikhmon.pro/download) |
+| **Mikhmon for Windows** | Running locally on a Windows PC (PHP included, double-click to start) | [Download from mikhmon.pro](https://mikhmon.pro/download) · [source](https://github.com/mikhmon-pro/mikhmon-windows) |
 
-#### Update 08-16 2019 V3.18
-1. Penambahan harga jual. (Harga yang tampil di voucher)
+You can also use **Code → Download ZIP** on this page.
 
-	*update user profile isi harga jual(selling price) dan update juga template vouchernya, silakan download di [website](https://laksa19.github.io/?mikhmon/v3/voucher)
-	
-2. Untuk pengguna Termux, uninstall Mikhmon kemudian install lagi. 
+## What's new in v3.21 (Community Edition)
 
-#### Update 08-06 2019 V3.17
-1. Perbaikan live report.
-2. Perbaikan generate users.
-3. Penambahan idle tileout (auto logout).
-4. Penambahan ping IP Mikrotik di session settings.
+- **RouterOS v7 support.** RouterOS 7.10 and later print dates as `2026-11-04` instead of `nov/04/2026`. The old on-login scripts wrote broken expiry dates and sales records on RouterOS v7. The new scripts handle both formats.
+- **Voucher expiry fixed on v6 and v7.** The expiry monitor reads both date formats, so expired users are removed or set to notice mode at the right time.
+- **Sales reports keep working.** Sales records are always written in Mikhmon's original date format, so daily, monthly and resume reports stay correct after you upgrade RouterOS.
+- **API parsing fix.** Values that contain `=` (scripts, comments) are no longer cut off.
+- Tested on live RouterOS 6.49 and 7.23.
 
-#### Update 07-14 2019 V3.16
-1. Penambahan address pool di add user profile dan edit user profile
-2. Notif new update di admin settings
+> After upgrading, open each **User Profile** in Mikhmon and click **Save** once. This writes the new on-login script to your router.
 
-#### Update 07-02 2019 V3.15
-1. Update RouterOS API for support v6.45.x
+## Features
 
-#### Update 05-09 2019 V3.14
-1. Perbaikan time zone untuk print / quick print.
-2. Penambahan input comment setelah comment user berubah menjadi tanggal expired.
+- Hotspot users: add, generate in bulk, edit, reset, remove and export (CSV or script)
+- User profiles with validity, price, expiry mode (remove or notice, with or without sales record) and MAC lock
+- Voucher printing with editable templates, QR codes and quick print
+- Live sales report, plus daily and monthly selling reports and a resume
+- Dashboard with CPU, memory and traffic, active users, hosts, IP bindings, DHCP leases and logs
+- Multiple routers (sessions), themes and languages (ID, EN, ES, TL, TR)
 
-	![314](https://raw.githubusercontent.com/laksa19/laksa19.github.io/master/img/3.14.gif)
+## Install
 
-#### Update 04-06 2019 V3.13 r7
-1. Perbaikan add user profile (gagal membuat monitor profile di scheduler).
-2. Perbaikan edit profile (remove monitor profile untuk expired mode none).
-3. Penambahan indikator monitor profile di laman list user profile dan edit user profile (Green = Monitor Profile aktif, Orange = Monitor Profile tidak aktif).
+**On a PHP server (Linux, hosting, STB, Raspberry Pi):** extract the ZIP into your web root and open it in a browser. PHP 7.x or 8.x with the `sockets` extension is enough.
 
-	``` Monitor Profile adalah scheduler yang mengecek expired user ```
+**With Docker:**
 
-	![indicator](https://raw.githubusercontent.com/laksa19/laksa19.github.io/master/img/profile-indicator.png)
-
-#### Update 04-02 2019 V3.13 r6
-1. Perbaikan penghitungan tanggal dan jam monitor user profile. 
-2. Perubahan global function ke local function. 
-
-	Silakan diupdate kembali user profilenya. (buka user profile dari Mikhmon, simpan kembali masing-masing user profile).
-
-	Setelah update user profile hapus semua environment (system -> scripts -> environment).
-
-	![delenvironment](https://raw.githubusercontent.com/laksa19/laksa19.github.io/master/img/delenvironment.gif)
-
-	Link Video [Update Profile v3.13 r6](https://drive.google.com/file/d/1ezFG0yxr3LOTgymH_ivUulF8MVevO2-V/view?usp=sharing)
-
-#### Update 03-31 2019 V3.13 r5
-1. Perbaikan user profile. (user expired dipergantian bulan). Silakan diupdate kembali user profilenya.
-	[https://github.com/laksa19/mikhmonv3/issues/5](https://github.com/laksa19/mikhmonv3/issues/5)
-
-#### Update 03-30 2019 V3.13 r4
-1. Perbaikan edit user.
-2. Penambahan nama profile di filter comment (user list).
-3. Penambahan hapus expired user (klik expired pada kolom comment user list).
-4. Perbaikan print laporan penjualan.
-
-#### Update 03-27 2019 V3.13 r3
-1. Perbaikan edit profile.
-2. Perbaikan userlist (dobel comment di pilihan/filter user berdasarkan comment).
-3. Penambahan changelog di laman About.
-
-#### Update 03-22 2019 V3.13 r2
-1. Perbaikan user profile, untuk data penjualan dobel (user 2 digit angka). Silakan diupdate kembali user profilenya.
-
-#### Update 03-21 2019 V3.13 r1
-1. Perbaikan user profile, untuk data penjualan tidak muncul di Mikhmon. Silakan diupdate kembali user profilenya.
-
-#### Update 03-20 2019 V3.13
-1. Perbaikan QR Code. Tidak lagi menggunakan Google chart API.
-2. Perubahan variable QR Code menjadi <?= $qrcode ?> tanpa tag ```<img>```. 
-	  
-   ! Perlu penyesuaian untuk template hotspot, ubah 
-  ```<img src="<?= $qrcode ?>" >``` menjadi ```<?= $qrcode ?>``` tanpa tag ```<img>```. Bagi yang menggunakan template default bisa reset template default untuk menyesuaikan QR Code.
-	  
-   Untuk template voucher yang lain bisa menyesuaikan ukuran QR Code dapat menambahkan style sebagai berikut.
-   
-```html
-<style>
-  .qrcode{
-  height:80px;
-  width:80px;
-  }
-</style>
+```bash
+docker run --rm -p 8080:80 -v "$PWD":/var/www/html php:8.2-apache
 ```
 
-![newqr](https://raw.githubusercontent.com/laksa19/laksa19.github.io/master/img/newqr.gif)
-   
-3. Penghapusan Grace period. 
-4. Pehapusan info start dan end user.
-5. Perubahan mode expired. 
-	
-	Mode baru ini tidak lagi menggunakan scheduler per user. Sebagai gantinya informasi tanggal expired akan dipindahkan ke comment user setelah login. Silakan update user profile agar dapat menggunakan mode expired yang baru. Pengecekan expired user yang login sebelum user profile diupdate atau yang masih menggunakan mode expired versi 3.12, bisa melalui scheduler di Mikhmon.
+Then open http://localhost:8080.
 
-    ! Untuk yang menggunakan expired mode dengan record jangan update user profile yang sudah ada, sampai user dengan profile tersebut sudah habis. Sebaiknya buat user profile baru dan generate user baru dengan user profile tersebut. Apa yang terjadi jika diupdate? Report penjualan akan menjadi bertambah untuk masing-user yang sudah login. Tapi kalau tidak ada masalah dengan data penjualan yang double, silakan update user profilenya.
+**On Windows:** use [Mikhmon for Windows](https://mikhmon.pro/download). Extract it and run `MikhmonServer.cmd`.
 
-    ! User yang login sebelum user profile diupdate akan tetap menggunakan sistem atau mode expired yang lama.
-    
-    ! Jangan hapus atau mengganti comment user jika sudah menggunakan format tanggal sebagai berikut :
- 		
-	```mar/20/2019 16:05:11```.
+The default login is `mikhmon` / `1234`. Change it in **Settings → Admin** after your first login.
 
-6. Cek status voucher tidak bisa untuk user yang masih menggunakan profile dengan mode expired versi 3.12.
+## Bahasa Indonesia
 
-#### Update 03-12 2019 V3.12 r1
-1. Perbaikan user profile. Meminimalisir user terhapus sesaat setelah login. !Silakan update user profile dari Mikhmon.
+**Mikhmon v3 Community Edition** adalah Mikhmon (MikroTik Hotspot Monitor) versi klasik yang diperbarui agar jalan di **RouterOS v6 dan RouterOS v7**. Kamu bisa membuat dan mencetak voucher hotspot, mengelola user dan user profile, serta melihat laporan penjualan langsung dari browser.
 
-#### Update 03-08 2019 V3.12
-1. Perbaikan remove session.
-2. Penambahan print untuk report
-3. Penambahan filter berdasarkan comment dan range tanggal. (Mikhmon Online).
+> ### ⚡ Malas install?
+> **[Mikhmon Online di mikhmon.pro: cuma Rp10.000/bulan, sudah termasuk tunnel untuk hingga 100 router →](https://mikhmon.pro/fast?utm_source=github&utm_medium=readme&utm_campaign=mikhmon-v3)**
 
-#### Update 02-14 2019 V3.11
-1. Perbaikan dashboard blank.
-2. Penggantian Print Bluetooth dengan Quick Printer
-3. Penambahan Quick Print. Panduan, https://youtu.be/KGAsHU0qOBA
+- **Download Mikhmon v3 (ZIP)** dan **Mikhmon untuk Windows (PC)**: [mikhmon.pro/download](https://mikhmon.pro/download)
+- **Mendukung RouterOS v7.** Masa aktif voucher dan laporan penjualan memahami format tanggal baru RouterOS 7.10 ke atas.
+- **Setelah update:** buka setiap **User Profile** di Mikhmon lalu klik **Save** satu kali.
+- Login default: `mikhmon` / `1234`.
 
-#### Update 02-06 2019 V3.10
-1. Perbaikan delete logo.
-2. Penambahan pilihan bahasa.
-3. Dukungan untuk print voucher dari Android. Telah diuji untuk Zjiang Printer Thermal Bluetooth - ZJ-5802.
-Panduan, https://laksa19.github.io/printBT.html
+## Credits and license
 
-#### Update 02-01 2019 V3.9 r3
-1. Perbaaikan cek empty session laman admin
-2. Perbaikan resume report, untuk menampilkan resume bulan sebelumnya.
+Mikhmon was created by **Laksamadi Guko** ([laksa19](https://github.com/laksa19)). This Community Edition is a fork of [laksa19/mikhmonv3](https://github.com/laksa19/mikhmonv3) and keeps the original author's credits. The original changelog is in [CHANGELOG-ORIGINAL.md](CHANGELOG-ORIGINAL.md).
 
-#### Update 01-29 2019 V3.9 r2
-1. Perbaaikan load time laman dashboard.
-2. Perbaikan laman uploaad logo.
+The RouterOS API class is based on [BenMenking/routeros-api](https://github.com/BenMenking/routeros-api).
 
-#### Update 01-29 2019 V3.9 r1
-1. Perbaikan template voucher editor.
-2. Penambahan short tabel.
-3. Perbaikan reset hotspot user.
+Licensed under the [GNU GPL v2](LICENSE).
 
-#### Update 01-27-2019 V3.9
-1. Perbaikan CSS, penambahan tema Blue dan Green.
-2. Cek Koneksi sebelum masuk dashboard dan berganti session.
-3. Penambahan Indikator session Mikhmon yang aktif.
-4. Penambahan fitur Resume Report.
+---
 
-#### Update 01-22-2019 V3.8
-1. Perbaikan Theme.
-2. Traffic dashboard dengan Highchart.
-3. Penambahan fitur Traffic Monitor.
-
-#### Update 01-17-2019 V3.7
-1. Penambahan Light Theme.
-2. Pennambahan menu penngganttian tema di navbar.
-
-#### Update 12-21-2018 V3.6 r1
-1. Penambahan Live Report
-
-#### Update 12-1-2018 V3.6
-1. Penambahan progrss bar.
-2. Enable price use decimal (.).
-3. Filter report by prefix.
-4. Export user to script.
-5. Export user to csv.
-6. Penggantian kolom print menjadi tombol dan penambahan pilihan comment di user list.
-7. Perubahan cara print voucher dari user list.
-6. Beautify template editor dan penambahan tombol view voucher.
-
-#### Update 11-9-2018 V3.5
-1. Penambahan chart traffic. Sesuaikan Max Rx dan Tx di Settings.
-2. Penambahan pilihan filter di Report dan User Log. 
-
-#### Update 10-30-2018 V3.4
-1. Penambahan cek spasi di nama user profile.
-2. Penambahan user profile dan comment di Report. Yang perlu dilakukan adalah update user profile dari Mikhmon, buka user profile yang ingin diupdate kemudian klik Save. 
-3. Penambahan filter berdasarkan server hotspot di Hotspot Active.
-
-#### Update 10-24-2018 V3.3
-1. Perubahan struktur menu.
-2. Penambahan Hotspot Cookie dan System Scheduler.
-3. Perubahan Generate User. Menghilangkan huruf l,L,q,Q,o,O serta angka 1 dan 0.
-4. Perbaikan remove user.
-
-#### Update 09-10-2018 V3.2
-1. Penambahan kolom Time Left di Hotspot Active.
-2. Penambahan Parent Queue di Add dan Edit User Profile (Bagaimana cara penggunaannya? silakan pelajari Simple Queue Mikrotik).
-3. Penyesuaian format Data Limit user menjadi Byte Binary ([base 2](https://www.gbmb.org/gigabytes)).
-4. Reformat Uptime.
+Maintained by [Mikhmon Pro](https://mikhmon.pro). **[Try Mikhmon Online: Rp10.000/month, tunnel included for up to 100 routers](https://mikhmon.pro/fast?utm_source=github&utm_medium=readme&utm_campaign=mikhmon-v3)**

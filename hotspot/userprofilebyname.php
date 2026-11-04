@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__) . '/lib/routeros_compat.php';
 /*
  *  Copyright (C) 2018 Laksamadi Guko.
  *
@@ -162,6 +163,17 @@ if (!isset($_SESSION["mikhmon"])) {
 
     $bgservice = ':local dateint do={:local montharray ( "jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec" );:local days [ :pick $d 4 6 ];:local month [ :pick $d 0 3 ];:local year [ :pick $d 7 11 ];:local monthint ([ :find $montharray $month]);:local month ($monthint + 1);:if ( [len $month] = 1) do={:local zero ("0");:return [:tonum ("$year$zero$month$days")];} else={:return [:tonum ("$year$month$days")];}}; :local timeint do={ :local hours [ :pick $t 0 2 ]; :local minutes [ :pick $t 3 5 ]; :return ($hours * 60 + $minutes) ; }; :local date [ /system clock get date ]; :local time [ /system clock get time ]; :local today [$dateint d=$date] ; :local curtime [$timeint t=$time] ; :foreach i in [ /ip hotspot user find where profile="'.$name.'" ] do={ :local comment [ /ip hotspot user get $i comment]; :local name [ /ip hotspot user get $i name]; :local gettime [:pic $comment 12 20]; :if ([:pic $comment 3] = "/" and [:pic $comment 6] = "/") do={:local expd [$dateint d=$comment] ; :local expt [$timeint t=$gettime] ; :if (($expd < $today and $expt < $curtime) or ($expd < $today and $expt > $curtime) or ($expd = $today and $expt < $curtime)) do={ [ /ip hotspot user '.$mode.' $i ]; [ /ip hotspot active remove [find where user=$name] ];}}}';
     
+
+    // RouterOS 6 and 7 safe expiry scripts (RouterOS 7 changed the clock date format).
+    if (in_array($expmode, array('rem', 'ntf', 'remc', 'ntfc'), true)) {
+      try {
+        $onlogin = mikhmon_v3_profile_onlogin_source($expmode, (string) $price, (string) $validity, (string) $sprice, (string) $getlock, (string) $name);
+        $bgservice = mikhmon_v3_profile_expiration_monitor_source((string) $name, $mode);
+      } catch (InvalidArgumentException $e) {
+        echo '<script>alert(' . json_encode($e->getMessage()) . ');history.back();</script>';
+        exit;
+      }
+    }
 
     $API->comm("/ip/hotspot/user/profile/set", array(
 			  		  /*"add-mac-cookie" => "yes",*/
